@@ -218,6 +218,9 @@ function App() {
         suggestions.length > 0 &&
         suggestions.map((suggestion) => <p key={suggestion}>{suggestion}</p>)
       )}
+      {query && !loading && suggestions.length === 0 && (
+        <p>No results found ⛔</p>
+      )}
     </>
   );
 }
