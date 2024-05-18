@@ -180,9 +180,12 @@ function App() {
 
   useEffect(() => {
     setSuggestions([]);
+    let ignore = false;
     const fetchFruits = async () => {
       const data = await getAutoCompleteResults(debounceQuery);
-      setSuggestions(data);
+      if (!ignore) {
+        setSuggestions(data);
+      }
     };
 
     if (!query) {
@@ -192,6 +195,10 @@ function App() {
     if (query.length) {
       fetchFruits();
     }
+
+    return () => {
+      ignore = true;
+    };
   }, [debounceQuery]);
 
   return (
