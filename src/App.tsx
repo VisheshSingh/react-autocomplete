@@ -175,6 +175,7 @@ function getAutoCompleteResults(query: string): Promise<string[]> {
 
 function App() {
   const [query, setQuery] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const debounceQuery = useDebounceValue(query);
 
@@ -182,9 +183,11 @@ function App() {
     setSuggestions([]);
     let ignore = false;
     const fetchFruits = async () => {
+      setLoading(true);
       const data = await getAutoCompleteResults(debounceQuery);
       if (!ignore) {
         setSuggestions(data);
+        setLoading(false);
       }
     };
 
@@ -209,8 +212,12 @@ function App() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      {suggestions.length > 0 &&
-        suggestions.map((suggestion) => <p key={suggestion}>{suggestion}</p>)}
+      {loading ? (
+        <p>Loading results...</p>
+      ) : (
+        suggestions.length > 0 &&
+        suggestions.map((suggestion) => <p key={suggestion}>{suggestion}</p>)
+      )}
     </>
   );
 }
