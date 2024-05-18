@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
+function useDebounceValue(value: string, time = 250) {
+  const [debounceVal, setDebounceVal] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceVal(value);
+    }, time);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, time]);
+  return debounceVal;
+}
+
 function getAutoCompleteResults(query: string): Promise<string[]> {
   const fruits = [
     'Abiu',
@@ -162,11 +176,12 @@ function getAutoCompleteResults(query: string): Promise<string[]> {
 function App() {
   const [query, setQuery] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const debounceQuery = useDebounceValue(query);
 
   useEffect(() => {
     setSuggestions([]);
     const fetchFruits = async () => {
-      const data = await getAutoCompleteResults(query);
+      const data = await getAutoCompleteResults(debounceQuery);
       setSuggestions(data);
     };
 
@@ -177,7 +192,7 @@ function App() {
     if (query.length) {
       fetchFruits();
     }
-  }, [query]);
+  }, [debounceQuery]);
 
   return (
     <>
